@@ -1,0 +1,840 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Gift for You 💕</title>
+    <!-- Google Fonts: Mali & Itim -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Mali:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome for Music Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================================
+           1. STYLES & THEME VARIABLES
+           ========================================================= */
+        :root {
+            --bg-pink: #FFD1DC;
+            --bg-cream: #FFFDD0;
+            --accent-gold: #D4AF37;
+            --rose-gold: #b76e79;
+            --deep-rose: #d65a6e;
+            --card-glass: rgba(255, 255, 255, 0.75);
+            --shadow-soft: 0 10px 30px rgba(183, 110, 121, 0.15);
+            --font-main: 'Mali', cursive, sans-serif;
+            --font-title: 'Itim', cursive, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #ffeef2 0%, #fffdd0 50%, #ffe3ea 100%);
+            min-height: 100vh;
+            color: #5a4b4e;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating Background Animation Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* =========================================================
+           2. LANDING COVER / LOCK SCREEN
+           ========================================================= */
+        #coverScreen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .gift-box-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow-soft);
+            max-width: 450px;
+            width: 100%;
+            animation: floatCard 4s ease-in-out infinite;
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .gift-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulseIcon 2s infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .cover-title {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            color: var(--deep-rose);
+            margin-bottom: 10px;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+            color: #7a686b;
+            margin-bottom: 25px;
+        }
+
+        /* Glowing Button */
+        .btn-open {
+            background: linear-gradient(45deg, #b76e79, #e899a5);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-family: var(--font-main);
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(183, 110, 121, 0.4);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .btn-open:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(183, 110, 121, 0.6);
+            background: linear-gradient(45deg, #d65a6e, #f2a6b2);
+        }
+
+        /* =========================================================
+           3. MAIN SURPRISE CONTENT
+           ========================================================= */
+        #mainContent {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            padding-bottom: 60px;
+        }
+
+        /* Audio Floating Control Button */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--card-glass);
+            border: 2px solid white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-soft);
+            color: var(--deep-rose);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Card Section Styling */
+        .section-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: var(--font-title);
+            color: var(--deep-rose);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Counter Section */
+        .counter-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .counter-box {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 12px 18px;
+            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #ffe3ea;
+        }
+
+        .counter-num {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--deep-rose);
+            font-family: var(--font-title);
+        }
+
+        .counter-label {
+            font-size: 0.85rem;
+            color: #8c7b7e;
+        }
+
+        /* Polaroid Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .polaroid-card {
+            background: white;
+            padding: 15px 15px 25px 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            perspective: 1000px;
+            height: 310px;
+            transition: transform 0.3s ease;
+        }
+
+        .polaroid-card:hover {
+            transform: translateY(-8px) rotate(1deg);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .polaroid-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .card-front .caption {
+            margin-top: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #635255;
+        }
+
+        .card-back {
+            background: #fff0f3;
+            transform: rotateY(180deg);
+            padding: 20px;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #f7cad0;
+        }
+
+        .card-back p {
+            font-size: 0.95rem;
+            color: #574447;
+            line-height: 1.5;
+        }
+
+        .flip-hint {
+            font-size: 0.75rem;
+            color: #a39295;
+            margin-top: 8px;
+        }
+
+        /* Love Letter Section */
+        .letter-paper {
+            background: #fffdf9;
+            border: 1px solid #f3e5d8;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: left;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.05);
+            min-height: 180px;
+        }
+
+        .typing-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a3e40;
+            white-space: pre-line;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: var(--deep-rose);
+            vertical-align: middle;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Q&A Interactive Section */
+        .qa-container {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            padding: 20px 10px;
+        }
+
+        .qa-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn-love {
+            background: linear-gradient(45deg, #ff758c, #ff7eb3);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            font-family: var(--font-main);
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), font-size 0.3s ease;
+            z-index: 10;
+            max-width: 90vw;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .btn-love:hover {
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.6);
+        }
+
+        .btn-no {
+            background: #e2d9dc;
+            color: #7a6e71;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            font-family: var(--font-main);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+
+        /* Modal Overlay for Love Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-btn {
+            margin-top: 20px;
+            background: var(--deep-rose);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-family: var(--font-main);
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .footer-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a39295;
+            margin-top: 30px;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 600px) {
+            .gift-box-card { padding: 30px 20px; }
+            .cover-title { font-size: 1.5rem; }
+            .counter-box { min-width: 65px; padding: 10px; }
+            .counter-num { font-size: 1.4rem; }
+            .qa-buttons { flex-direction: column; gap: 15px; }
+            .btn-no { position: relative !important; top: 0 !important; left: 0 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Particle Canvas for Floating Hearts & Sparkles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Floating Audio Control -->
+    <button class="music-btn" id="musicToggle" title="เปิด/ปิด เสียงเพลง">
+        <i class="fas fa-music"></i>
+    </button>
+    <!-- Romantic Audio Track (Replace src with your own song URL if needed) -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-loving-you-117.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        
+        <!-- =========================================================
+             SECTION 1: LANDING COVER / LOCK SCREEN
+             ========================================================= -->
+        <div id="coverScreen">
+            <div class="gift-box-card">
+                <div class="gift-icon">🎁</div>
+                <!-- Modify Your Greeting Message Here -->
+                <h1 class="cover-title">มีของขวัญชิ้นพิเศษส่งถึงคุณ... ✨</h1>
+                <p class="cover-subtitle">ตั้งใจทำมาให้เฉพาะเธอคนเดียวเลยนะ 💕</p>
+                <button class="btn-open" onclick="openSurprise()">คลิกเพื่อเปิดกล่องความสุข ✨</button>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             SECTION 2: MAIN SURPRISE CONTENT
+             ========================================================= -->
+        <div id="mainContent">
+
+            <!-- 2.1 Photo Memory Gallery (Polaroid Flip Cards) -->
+            <div class="section-card">
+                <h2 class="section-title"><span>📸</span> ความทรงจำสุดพิเศษของเรา</h2>
+                <p style="font-size: 0.85rem; color: #9c8b8e; margin-bottom: 15px;">(แตะที่รูปเพื่อพลิกอ่านข้อความลับนะจ๊ะ ✨)</p>
+                
+                <div class="gallery-grid">
+                    <!-- Photo Card 1 -->
+                    <div class="polaroid-card" onclick="flipCard(this)">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <!-- รูปภาพที่ 1 -->
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_91802W29NT5MnaHknzBLckDWZdx-VriDxw&s" alt="Memory 1">
+                                <div class="caption">เดทแรกของเรา ☕</div>
+                                <span class="flip-hint">แตะเพื่อพลิก 🔄</span>
+                            </div>
+                            <div class="card-back">
+                                <p>จำวันนั้นได้ไหม? ที่เรานั่งคุยกันตื่นเต้นจนทำแก้วกาแฟเกือบหก แต่มันคือจุดเริ่มต้นของเรื่องราวดีๆ ทั้งหมดเลยนะ 🥰</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Card 2 -->
+                    <div class="polaroid-card" onclick="flipCard(this)">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <!-- รูปภาพที่ 2 -->
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_91802W29NT5MnaHknzBLckDWZdx-VriDxw&s" alt="Memory 2">
+                                <div class="caption">ทริปเที่ยวด้วยกัน 🌅</div>
+                                <span class="flip-hint">แตะเพื่อพลิก 🔄</span>
+                            </div>
+                            <div class="card-back">
+                                <p>ไม่ว่าจะเดินทางไปที่ไหน ขอแค่มีเธอข้างๆ ทุกที่ก็กลายเป็นสถานที่โปรดของเค้าเสมอเลย 🏖️✨</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Card 3 -->
+                    <div class="polaroid-card" onclick="flipCard(this)">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <!-- รูปภาพที่ 3 -->
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_91802W29NT5MnaHknzBLckDWZdx-VriDxw&s" alt="Memory 3">
+                                <div class="caption">รอยยิ้มของเธอ 😊</div>
+                                <span class="flip-hint">แตะเพื่อพลิก 🔄</span>
+                            </div>
+                            <div class="card-back">
+                                <p>ชอบเวลารอยยิ้มของเธอสว่างสดใสที่สุด มันคือพลังบวกที่ช่วยเติมไฟให้เค้าในทุกๆ วันเลยนะ ❤️</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.2 Interactive Love Letter (Typewriter) -->
+            <div class="section-card">
+                <h2 class="section-title"><span>💌</span> จดหมายถึงคนพิเศษ</h2>
+                <div class="letter-paper">
+                    <span id="typewriterText" class="typing-text"></span><span class="cursor"></span>
+                </div>
+            </div>
+
+            <!-- 2.3 Playful Q&A Section -->
+            <div class="section-card">
+                <h2 class="section-title"><span>❓</span> คำถามวัดระดับความรัก</h2>
+                <p style="font-size: 1.1rem; color: #5a4b4e; font-weight: 600;">" แล้วเธอรักเค้าบ้างไหมเนี่ย? 🙈 "</p>
+                <div class="qa-container">
+                    <div class="qa-buttons">
+                        <button class="btn-love" id="btnLove" onclick="showLoveModal()">รักที่สุดในโลกเลย 💕</button>
+                        <button class="btn-no" id="btnNo" onmouseover="growLoveButton()" onclick="growLoveButton()">ไม่รักเลย 😜</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-text">
+                Made with ❤️ for You | Forever & Always
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Popup when clicking "รักที่สุดในโลก" -->
+    <div class="modal-overlay" id="loveModal">
+        <div class="modal-card">
+            <div class="modal-icon">💖💖💖</div>
+            <h2 style="font-family: var(--font-title); color: var(--deep-rose); margin-bottom: 10px;">เย้! เค้าก็รักเธอเหมือนกันนะ</h2>
+            <p style="color: #6a5a5d; font-size: 0.95rem; line-height: 1.6;">
+                ขอบคุณที่เป็นความสุขให้กันเสมอมานะ<br>
+                สัญญาว่าจะดูแลและรักเธอแบบนี้ไปนานๆ เลยครับ 🥰✨
+            </p>
+            <button class="modal-btn" onclick="closeLoveModal()">ขอบคุณน้าา 💓</button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         4. JAVASCRIPT LOGIC
+         ========================================================= -->
+    <script>
+        /* ---------------------------------------------------------
+           [ข้อความในจดหมายรัก (LOVE LETTER TEXT)]
+           --------------------------------------------------------- */
+        const loveLetterText = `ถึงคนเก่งของเค้า... ❤️\n\nอยากขอบคุณสำหรับทุกๆ รอยยิ้ม ความเข้าอกเข้าใจ และทุกช่วงเวลาดีๆ ที่เราได้ใช้อยู่ร่วมกันนะ\n\nเธอทำให้วันธรรมดาๆ กลายเป็นวันที่พิเศษเสมอ ไม่ว่าจะเจอเรื่องเหนื่อยแค่ไหน พอได้เห็นหน้าเธอ เค้าก็หายเหนื่อยแล้ว\n\nขอให้เราจับมือกันแบบนี้ น่ารักใส่กันแบบนี้ไปนานๆ เลยนะ\nรักเธอที่สุดในโลกเลยครับ! 💖✨`;
+
+        /* =========================================================
+           BACKGROUND CANVAS ANIMATION (Floating Hearts & Sparkles)
+           ========================================================= */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 20;
+                this.size = Math.random() * 14 + 8;
+                this.speedY = Math.random() * 1.2 + 0.5;
+                this.speedX = Math.sin(Math.random() * Math.PI) * 0.5;
+                this.opacity = Math.random() * 0.6 + 0.3;
+                this.type = Math.random() > 0.4 ? 'heart' : 'sparkle';
+                this.color = ['#ff7e95', '#ffa4b6', '#ffd1dc', '#f3c68f'][Math.floor(Math.random() * 4)];
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.y * 0.01) * 0.5;
+                if (this.y < -20) this.reset();
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                if (this.type === 'heart') {
+                    ctx.beginPath();
+                    const topCurveHeight = this.size * 0.3;
+                    ctx.moveTo(this.x, this.y + topCurveHeight);
+                    ctx.bezierCurveTo(this.x, this.y, this.x - this.size / 2, this.y, this.x - this.size / 2, this.y + topCurveHeight);
+                    ctx.bezierCurveTo(this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2, this.x, this.y + this.size, this.x, this.y + this.size);
+                    ctx.bezierCurveTo(this.x, this.y + this.size, this.x + this.size / 2, this.y + (this.size + topCurveHeight) / 2, this.x + this.size / 2, this.y + topCurveHeight);
+                    ctx.bezierCurveTo(this.x + this.size / 2, this.y, this.x, this.y, this.x, this.y + topCurveHeight);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size / 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // Init Particles
+        for (let i = 0; i < 40; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        /* =========================================================
+           OPEN SURPRISE FLOW & CONFETTI
+           ========================================================= */
+        function openSurprise() {
+            // Hide Cover Screen
+            const cover = document.getElementById('coverScreen');
+            cover.style.opacity = '0';
+            cover.style.transform = 'scale(0.9)';
+
+            setTimeout(() => {
+                cover.style.display = 'none';
+                
+                // Show Main Content
+                const main = document.getElementById('mainContent');
+                main.style.display = 'block';
+                setTimeout(() => { main.style.opacity = '1'; }, 50);
+
+                // Start Music
+                playMusic();
+
+                // Trigger Confetti Fireworks
+                triggerConfetti();
+
+                // Start Typing Effect
+                startTyping();
+
+            }, 800);
+        }
+
+        // Confetti Function
+        function triggerConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#ff7e95', '#ffd1dc'] });
+            fire(0.2, { spread: 60, colors: ['#D4AF37', '#ffffff'] });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#e899a5'] });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        /* =========================================================
+           AUDIO PLAYER CONTROLLER
+           ========================================================= */
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggle');
+        let isPlaying = false;
+
+        function playMusic() {
+            audio.play().then(() => {
+                isPlaying = true;
+                musicBtn.innerHTML = '<i class="fas fa-heartbeat"></i>';
+            }).catch(err => {
+                console.log("Audio autoplay restricted by browser.");
+            });
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+            } else {
+                audio.play();
+                musicBtn.innerHTML = '<i class="fas fa-heartbeat"></i>';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        /* =========================================================
+           POLAROID CARD FLIP
+           ========================================================= */
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        /* =========================================================
+           TYPEWRITER EFFECT FOR LOVE LETTER
+           ========================================================= */
+        let typeIndex = 0;
+        function startTyping() {
+            const container = document.getElementById('typewriterText');
+            if (typeIndex < loveLetterText.length) {
+                container.textContent += loveLetterText.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(startTyping, 50); // Control speed
+            }
+        }
+
+        /* =========================================================
+           GROWING LOVE BUTTON WHEN HOVERING/CLICKING "NO"
+           ========================================================= */
+        let loveScale = 1;
+        let noClicks = 0;
+        const noPhrases = [
+            "ไม่รักเลย 😜",
+            "แน่ใจเหรอ? 🥺",
+            "คิดอีกทีสิคะ 💖",
+            "กดปุ่มซ้ายเหอะน้าา 🥺",
+            "ง้อแล้วนะ! 💕",
+            "รักเค้าเถอะนะะ ✨"
+        ];
+
+        function growLoveButton() {
+            loveScale += 0.45;
+            noClicks++;
+
+            const btnLove = document.getElementById('btnLove');
+            const btnNo = document.getElementById('btnNo');
+
+            // Apply scaling transform
+            btnLove.style.transform = `scale(${loveScale})`;
+
+            // Change phrase on No button
+            const nextPhrase = noPhrases[Math.min(noClicks, noPhrases.length - 1)];
+            btnNo.innerText = nextPhrase;
+
+            // Make the love button fixed if it grows too big so it covers screen
+            if (loveScale > 3.5) {
+                btnLove.style.position = 'fixed';
+                btnLove.style.top = '50%';
+                btnLove.style.left = '50%';
+                btnLove.style.transform = `translate(-50%, -50%) scale(${loveScale})`;
+                btnLove.style.zIndex = '999';
+            }
+        }
+
+        /* =========================================================
+           MODAL POPUP CONTROLS
+           ========================================================= */
+        function showLoveModal() {
+            document.getElementById('loveModal').style.display = 'flex';
+            // Trigger extra heart confetti
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: ['#ff4d6d', '#ff758c', '#ff8fa3', '#ffffff']
+            });
+        }
+
+        function closeLoveModal() {
+            document.getElementById('loveModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+```
